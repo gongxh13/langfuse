@@ -75,6 +75,56 @@ export async function callStructuredLLM<T extends ZodV3Schema>(
   }, "call LLM");
 }
 
+export async function callLLMWithPromptSchema<T extends ZodV3Schema>(
+  jeId: string,
+  llmApiKey: z.infer<typeof LLMApiKeySchema>,
+  messages: ChatMessage[],
+  modelParams: z.infer<typeof ZodModelConfig>,
+  provider: string,
+  model: string,
+  structuredOutputSchema: T,
+): Promise<zodV3.infer<T>> {
+  return withLLMErrorHandling(async () => {
+    const { completion } = await fetchLLMCompletion({
+      streaming: false,
+      apiKey: decrypt(llmApiKey.secretKey),
+      extraHeaders: decryptAndParseExtraHeaders(llmApiKey.extraHeaders),
+      baseURL: llmApiKey.baseURL || undefined,
+      messages,
+      modelParams: {
+        provider,
+        model,
+        adapter: llmApiKey.adapter,
+        ...modelParams,
+      },
+      config: llmApiKey.config,
+      maxRetries: 1,
+    });
+
+    if (!completion) {
+      throw new Error("LLM returned empty completion.");
+    }
+
+    let parsed: unknown;
+    try {
+      let content = completion.trim();
+      const codeBlockRegex = /```(?:json)?\s*([\s\S]*?)\s*```/i;
+      const match = content.match(codeBlockRegex);
+      if (match) {
+        content = match[1].trim();
+      }
+
+      parsed = JSON.parse(content);
+    } catch (err) {
+      throw new Error(
+        `Unable to parse model response as valid JSON. Response was:\n${completion}`,
+      );
+    }
+
+    return structuredOutputSchema.parse(parsed);
+  }, "call LLM");
+}
+
 export async function callLLM(
   llmApiKey: z.infer<typeof LLMApiKeySchema>,
   messages: ChatMessage[],

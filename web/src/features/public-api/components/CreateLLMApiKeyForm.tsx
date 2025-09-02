@@ -64,6 +64,7 @@ const createFormSchema = (mode: "create" | "update") =>
           value: mode === "create" ? z.string().min(1) : z.string().optional(),
         }),
       ),
+      supportsStructuredOutput: z.boolean().default(true),
     })
     // 1) If adapter requires custom models, enforce that first
     .refine(
@@ -210,6 +211,7 @@ export function CreateLLMApiKeyForm({
               existingKey.adapter === LLMAdapter.VertexAI && existingKey.config
                 ? ((existingKey.config as VertexAIConfig).location ?? "")
                 : "",
+            supportsStructuredOutput: existingKey.supportsStructuredOutput,
           }
         : {
             adapter: defaultAdapter,
@@ -220,6 +222,7 @@ export function CreateLLMApiKeyForm({
             customModels: [],
             extraHeaders: [],
             vertexAILocation: "",
+            supportsStructuredOutput: true, 
           },
   });
 
@@ -439,6 +442,7 @@ export function CreateLLMApiKeyForm({
         .map((m) => m.value.trim())
         .filter(Boolean),
       extraHeaders,
+      supportsStructuredOutput: values.supportsStructuredOutput,
     };
 
     try {
@@ -824,6 +828,31 @@ export function CreateLLMApiKeyForm({
               {/* Custom model names */}
               {!isCustomModelsRequired(currentAdapter) &&
                 renderCustomModelsField()}
+                
+              {/* Native support structured output */}
+              <FormField  
+                control={form.control}  
+                name="supportsStructuredOutput"  
+                render={({ field }) => (  
+                  <FormItem>  
+                    <span className="row flex">  
+                      <span className="flex-1">  
+                        <FormLabel>Supports Structured Output</FormLabel>  
+                        <FormDescription>  
+                          Enable if this model supports native structured output (e.g., The structured output feature of OpenAI).  
+                        </FormDescription>  
+                      </span>  
+                      <FormControl>  
+                        <Switch  
+                          checked={field.value}  
+                          onCheckedChange={field.onChange}  
+                        />  
+                      </FormControl>  
+                    </span>  
+                    <FormMessage />  
+                  </FormItem>  
+                )}  
+              />
             </div>
           )}
         </DialogBody>

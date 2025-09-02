@@ -14,6 +14,7 @@ export const LlmApiKeySchema = z.object({
   customModels: z.array(z.string().min(1)).optional(),
   config: z.union([VertexAIConfigSchema, BedrockConfigSchema]).optional(),
   extraHeaders: z.record(z.string(), z.string()).optional(),
+  supportsStructuredOutput: z.boolean().optional(),
 });
 
 export const CreateLlmApiKey = LlmApiKeySchema.extend({

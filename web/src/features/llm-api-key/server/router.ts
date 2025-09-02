@@ -171,6 +171,7 @@ export const llmApiKeyRouter = createTRPCRouter({
             withDefaultModels: input.withDefaultModels,
             customModels: input.customModels,
             config: input.config,
+            supportsStructuredOutput: input.supportsStructuredOutput,
           },
         });
 
@@ -290,6 +291,7 @@ export const llmApiKeyRouter = createTRPCRouter({
               withDefaultModels: true,
               extraHeaderKeys: true,
               config: true,
+              supportsStructuredOutput: true,
             },
             where: {
               projectId: input.projectId,
@@ -497,6 +499,7 @@ export const llmApiKeyRouter = createTRPCRouter({
             withDefaultModels: input.withDefaultModels,
             customModels: input.customModels,
             config: input.config,
+            supportsStructuredOutput: input.supportsStructuredOutput,
           },
         });
 

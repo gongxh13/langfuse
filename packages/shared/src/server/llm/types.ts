@@ -418,6 +418,7 @@ export const LLMApiKeySchema = z
     baseURL: z.string().nullable(),
     customModels: z.array(z.string()),
     withDefaultModels: z.boolean(),
+    supportsStructuredOutput: z.boolean(), 
     config: z.union([BedrockConfigSchema, VertexAIConfigSchema]).nullish(), // Bedrock and VertexAI have additional config
   })
   // strict mode to prevent extra keys. Thorws error otherwise

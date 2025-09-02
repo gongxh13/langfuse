@@ -564,6 +564,7 @@ export type LlmApiKeys = {
   extra_headers: string | null;
   extra_header_keys: Generated<string[]>;
   config: unknown | null;
+  supports_structured_output: Generated<boolean>;
   project_id: string;
 };
 export type LlmSchema = {

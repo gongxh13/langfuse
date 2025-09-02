@@ -55,7 +55,11 @@ import {
 } from "@langfuse/shared";
 import { kyselyPrisma, prisma } from "@langfuse/shared/src/db";
 import { backOff } from "exponential-backoff";
-import { callStructuredLLM, compileHandlebarString } from "../utils";
+import {
+  callLLMWithPromptSchema,
+  callStructuredLLM,
+  compileHandlebarString,
+} from "../utils";
 import { env } from "../../env";
 import { JSONPath } from "jsonpath-plus";
 
@@ -664,6 +668,18 @@ export const evaluate = async ({
     throw new LangfuseNotFoundError(modelConfig.error);
   }
 
+  // If llm not support structure output, add output schema in prompt
+  if (!modelConfig.config.apiKey.supportsStructuredOutput) {
+    prompt = `
+${prompt}
+
+Now strictly respond in JSON format only, following this schema:
+${JSON.stringify(evalScoreSchema._def.shape(), null, 2)}
+
+Do not include any explanation or extra text outside of the JSON.
+`;
+  }
+
   const messages = [
     {
       type: ChatMessageType.User,
@@ -672,21 +688,41 @@ export const evaluate = async ({
     } as const,
   ];
 
-  const parsedLLMOutput = await backOff(
-    async () =>
-      await callStructuredLLM(
-        event.jobExecutionId,
-        modelConfig.config.apiKey,
-        messages,
-        modelConfig.config.modelParams ?? {},
-        modelConfig.config.provider,
-        modelConfig.config.model,
-        evalScoreSchema,
-      ),
-    {
-      numOfAttempts: 1, // turn off retries as Langchain is doing that for us already.
-    },
-  );
+  let parsedLLMOutput = undefined;
+
+  if (modelConfig.config.apiKey.supportsStructuredOutput) {
+    parsedLLMOutput = await backOff(
+      async () =>
+        await callStructuredLLM(
+          event.jobExecutionId,
+          modelConfig.config.apiKey,
+          messages,
+          modelConfig.config.modelParams ?? {},
+          modelConfig.config.provider,
+          modelConfig.config.model,
+          evalScoreSchema,
+        ),
+      {
+        numOfAttempts: 1, // turn off retries as Langchain is doing that for us already.
+      },
+    );
+  } else {
+    parsedLLMOutput = await backOff(
+      async () =>
+        await callLLMWithPromptSchema(
+          event.jobExecutionId,
+          modelConfig.config.apiKey,
+          messages,
+          modelConfig.config.modelParams ?? {},
+          modelConfig.config.provider,
+          modelConfig.config.model,
+          evalScoreSchema,
+        ),
+      {
+        numOfAttempts: 1, // turn off retries as Langchain is doing that for us already.
+      },
+    );
+  }
 
   logger.debug(
     `Evaluating job ${event.jobExecutionId} Parsed LLM output ${JSON.stringify(parsedLLMOutput)}`,
