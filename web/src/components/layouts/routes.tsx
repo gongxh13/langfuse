@@ -18,6 +18,13 @@ import {
   SquarePercent,
   ClipboardPen,
   Clock,
+  FileTerminal,
+  TableCellsSplit,
+  SearchSlash,
+  MessageSquareShare,
+  DatabaseBackup,
+  FileScan,
+  Send,
 } from "lucide-react";
 import { type ReactNode } from "react";
 import { type Entitlement } from "@/src/features/entitlements/constants/entitlements";
@@ -38,7 +45,10 @@ export enum RouteSection {
 export enum RouteGroup {
   Observability = "Observability",
   PromptManagement = "Prompt Management",
+  Optimization = "Optimization",
+  Guardrails = "Guardrails",
   Evaluation = "Evaluation",
+  Feedback = "Feedback",
 }
 
 export type Route = {
@@ -125,7 +135,7 @@ export const ROUTES: Route[] = [
     icon: FileJson,
     projectRbacScopes: ["prompts:read"],
     productModule: "prompt-management",
-    group: RouteGroup.PromptManagement,
+    group: RouteGroup.Optimization,
     section: RouteSection.Main,
   },
   {
@@ -133,7 +143,49 @@ export const ROUTES: Route[] = [
     pathname: "/project/[projectId]/playground",
     icon: TerminalIcon,
     productModule: "playground",
-    group: RouteGroup.PromptManagement,
+    group: RouteGroup.Optimization,
+    section: RouteSection.Main,
+  },
+  {
+    title: "Document Chunking Strategy",
+    pathname: "/project/[projectId]",
+    icon: FileTerminal,
+    group: RouteGroup.Optimization,
+    section: RouteSection.Main,
+  },
+  {
+    title: "Table Parsing Strategy",
+    pathname: "/project/[projectId]",
+    icon: TableCellsSplit,
+    group: RouteGroup.Optimization,
+    section: RouteSection.Main,
+  },
+  {
+    title: "Retrieval Pre and Post processing Strategy",
+    pathname: "/project/[projectId]",
+    icon: SearchSlash,
+    group: RouteGroup.Optimization,
+    section: RouteSection.Main,
+  },
+  {
+    title: "Memory Strategy",
+    pathname: "/project/[projectId]",
+    icon: MessageSquareShare,
+    group: RouteGroup.Optimization,
+    section: RouteSection.Main,
+  },
+  {
+    title: "Data Protection",
+    pathname: "/project/[projectId]",
+    icon: DatabaseBackup,
+    group: RouteGroup.Guardrails,
+    section: RouteSection.Main,
+  },
+  {
+    title: "Prompt Injection Prevention",
+    pathname: "/project/[projectId]",
+    icon: FileScan,
+    group: RouteGroup.Guardrails,
     section: RouteSection.Main,
   },
   {
@@ -166,6 +218,14 @@ export const ROUTES: Route[] = [
     icon: Database,
     productModule: "datasets",
     group: RouteGroup.Evaluation,
+    section: RouteSection.Main,
+  },
+
+  {
+    title: "Feedback",
+    pathname: `/project/[projectId]`,
+    icon: Send,
+    group: RouteGroup.Feedback,
     section: RouteSection.Main,
   },
   {

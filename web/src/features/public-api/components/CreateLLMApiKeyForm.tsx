@@ -222,7 +222,7 @@ export function CreateLLMApiKeyForm({
             customModels: [],
             extraHeaders: [],
             vertexAILocation: "",
-            supportsStructuredOutput: true, 
+            supportsStructuredOutput: true,
           },
   });
 
@@ -828,30 +828,31 @@ export function CreateLLMApiKeyForm({
               {/* Custom model names */}
               {!isCustomModelsRequired(currentAdapter) &&
                 renderCustomModelsField()}
-                
+
               {/* Native support structured output */}
-              <FormField  
-                control={form.control}  
-                name="supportsStructuredOutput"  
-                render={({ field }) => (  
-                  <FormItem>  
-                    <span className="row flex">  
-                      <span className="flex-1">  
-                        <FormLabel>Supports Structured Output</FormLabel>  
-                        <FormDescription>  
-                          Enable if this model supports native structured output (e.g., The structured output feature of OpenAI).  
-                        </FormDescription>  
-                      </span>  
-                      <FormControl>  
-                        <Switch  
-                          checked={field.value}  
-                          onCheckedChange={field.onChange}  
-                        />  
-                      </FormControl>  
-                    </span>  
-                    <FormMessage />  
-                  </FormItem>  
-                )}  
+              <FormField
+                control={form.control}
+                name="supportsStructuredOutput"
+                render={({ field }) => (
+                  <FormItem>
+                    <span className="row flex">
+                      <span className="flex-1">
+                        <FormLabel>Supports Structured Output</FormLabel>
+                        <FormDescription>
+                          Enable if this model supports native structured output
+                          (e.g., The structured output feature of OpenAI).
+                        </FormDescription>
+                      </span>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </span>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
           )}
