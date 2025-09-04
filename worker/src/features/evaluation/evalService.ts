@@ -674,8 +674,11 @@ export const evaluate = async ({
 ${prompt}
 
 Now strictly respond in JSON format only, following this schema:
-${JSON.stringify(evalScoreSchema._def.shape(), null, 2)}
-
+{
+    "reasoning": "Provide the reasoning behind the score, explaining how it was determined.",
+    "score": "Provide the numerical score based on the evaluation criteria."
+}
+    
 Do not include any explanation or extra text outside of the JSON.
 `;
   }
