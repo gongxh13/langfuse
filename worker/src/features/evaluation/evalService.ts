@@ -673,10 +673,16 @@ export const evaluate = async ({
     prompt = `
 ${prompt}
 
+最终版本如下：
 Now strictly respond in JSON format only, following this schema:
 {
-    "reasoning": "Provide the reasoning behind the score, explaining how it was determined.",
-    "score": "Provide the numerical score based on the evaluation criteria."
+    "reasoning":string, // Provide the reasoning behind the score, explaining how it was determined
+    "score": float // Provide the numerical score based on the evaluation criteria
+}
+For example:
+{
+    "reasoning": "The essay demonstrates strong logical flow and well-supported arguments, but contains minor grammatical issues.",
+    "score": 8.5
 }
     
 Do not include any explanation or extra text outside of the JSON.
